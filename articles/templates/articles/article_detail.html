@@ -1,0 +1,57 @@
+{% extends "main/base.html" %}
+{% load markdown_extras %}
+
+{% block content %}
+<h2>{{ article.title }}</h2>
+<p><strong>Автор:</strong> {{ article.author }}</p>
+<p><strong>Дата публикации:</strong> {{ article.publication_date|date:"j F Y" }}</p>
+<p><a href="{{ article.source_url }}" target="_blank" rel="noopener">Оригинал статьи</a></p>
+
+<div class="page-info">
+  Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+  <progress value="{{ page_obj.number }}" max="{{ page_obj.paginator.num_pages }}"></progress>
+</div>
+
+<div class="search-bar">
+  <input type="text" id="search-input" placeholder="Поиск по странице..." />
+  <button onclick="searchInPage()">Найти</button>
+</div>
+
+<div class="article-content" id="article-content">
+  {{ page_obj.object_list.0|markdown_highlight|safe }}
+</div>
+
+<nav class="pagination">
+  {% if page_obj.has_previous %}
+  <a href="{% url 'article_detail_page' article.id page_obj.previous_page_number %}" class="pagination-button">← Предыдущая страница</a>
+  {% else %}
+  <button disabled class="pagination-button">← Предыдущая страница</button>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+  <a href="{% url 'article_detail_page' article.id page_obj.next_page_number %}" class="pagination-button">Следующая страница →</a>
+  {% else %}
+  <button disabled class="pagination-button">Следующая страница →</button>
+  {% endif %}
+</nav>
+
+<nav class="article-nav">
+  <a href="{% url 'article_list' %}" class="article-nav-link">← К списку статей</a>
+</nav>
+
+<script>
+function searchInPage() {
+  const input = document.getElementById('search-input').value.toLowerCase();
+  const content = document.getElementById('article-content');
+  const text = content.innerText.toLowerCase();
+  if (text.includes(input)) {
+    alert('Найдено на этой странице!');
+  } else {
+    alert('Ничего не найдено.');
+  }
+}
+</script>
+
+{% endblock %}

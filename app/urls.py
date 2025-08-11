@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('main.urls')),
     path('books/', include('books.urls')),
     path('videos/', include('videos.urls')),
+    path('articles/', include('articles.urls')),
 ]
 
 if settings.DEBUG:

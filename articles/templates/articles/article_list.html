@@ -1,0 +1,32 @@
+{% extends "main/base.html" %}
+{% block content %}
+<h2>Конспекты статей</h2>
+
+<ul>
+  {% for article in page_obj %}
+  <li><a href="{% url 'article_detail' article.id %}">{{ article.title }}</a> — {{ article.publication_date }}</li>
+  {% empty %}
+  <li>Статей пока нет.</li>
+  {% endfor %}
+</ul>
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+  {% else %}
+  <span>« Назад</span>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+  {% else %}
+  <span>Вперед »</span>
+  {% endif %}
+</div>
+
+<style>#search-input {
+  display: none;
+}</style>
+{% endblock %}
