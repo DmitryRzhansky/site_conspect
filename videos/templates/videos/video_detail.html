@@ -1,0 +1,42 @@
+{% extends "main/base.html" %}
+{% block content %}
+<h2>{{ video.title }}</h2>
+
+{% if video.youtube_id %}
+  <iframe width="600" height="338" 
+          src="https://www.youtube.com/embed/{{ video.youtube_id }}" 
+          frameborder="0" allowfullscreen></iframe>
+{% elif video.video_file %}
+  <video controls width="600">
+    <source src="{{ video.video_file.url }}" type="video/mp4">
+    Ваш браузер не поддерживает видео тег.
+  </video>
+{% endif %}
+
+<div class="page-info">
+  Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+</div>
+
+<div class="video-transcript">
+  {{ page_obj.object_list.0|linebreaks }}
+</div>
+
+<nav class="pagination">
+  {% if page_obj.has_previous %}
+  <a href="{% url 'video_detail_page' video.id page_obj.previous_page_number %}">← Предыдущая страница</a>
+  {% else %}
+  <span>← Предыдущая страница</span>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+  <a href="{% url 'video_detail_page' video.id page_obj.next_page_number %}">Следующая страница →</a>
+  {% else %}
+  <span>Следующая страница →</span>
+  {% endif %}
+</nav>
+
+<a href="{% url 'videos_list' %}">← К списку видео</a>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "main/base.html" %}
+{% block content %}
+<h2>Видео</h2>
+
+<form method="get" action="{% url 'videos_list' %}">
+  <input type="text" name="search" placeholder="Поиск по названию" value="{{ search_query }}">
+  <input type="text" name="author" placeholder="Автор" value="{{ author_filter }}">
+  <button type="submit">Фильтровать</button>
+</form>
+
+<div class="videos-container">
+  {% for video in page_obj %}
+  <div class="video-item">
+    <a href="{% url 'video_detail' video.id %}">
+      <h3>{{ video.title }}</h3>
+    </a>
+    {% if video.thumbnail %}
+      <img src="{{ video.thumbnail.url }}" alt="Миниатюра {{ video.title }}" style="max-width: 150px;" />
+    {% endif %}
+    {% if video.description %}
+      <p>{{ video.description }}</p>
+    {% endif %}
+    {% if video.author %}
+      <p><strong>Автор:</strong> {{ video.author }}</p>
+    {% endif %}
+  </div>
+  {% empty %}
+  <p>Видео пока нет.</p>
+  {% endfor %}
+</div>
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if author_filter %}&author={{ author_filter }}{% endif %}">« Назад</a>
+  {% else %}
+  <span>« Назад</span>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if author_filter %}&author={{ author_filter }}{% endif %}">Вперед »</a>
+  {% else %}
+  <span>Вперед »</span>
+  {% endif %}
+</div>
+
+{% endblock %}
