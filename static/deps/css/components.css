@@ -1,0 +1,64 @@
+/* Обертка пагинации */
+.pagination {
+  margin: 20px auto 0 auto;
+  padding: 8px 12px;
+  width: fit-content;
+  min-width: 250px;
+  border: 2px solid #666666;
+  background-color: #f5f1e9;
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    2px 2px 5px rgba(102, 102, 102, 0.3);
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  border-radius: 4px;
+}
+
+/* Кнопки пагинации */
+.pagination button,
+.pagination a {
+  background-color: #faf7f1;
+  border: 2px solid #666666;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  color: #0000ee;
+  font-weight: normal;
+  font-family: 'Times New Roman', Times, serif;
+  border-radius: 3px;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+  display: inline-block;
+  min-width: 70px;
+  text-align: center;
+  user-select: none;
+}
+
+/* Отключенные кнопки */
+.pagination button[disabled],
+.pagination span {
+  color: #999999;
+  cursor: default;
+  text-decoration: none;
+  border-color: #ccc;
+  background-color: #f9f6f1;
+}
+
+/* Ховеры для активных кнопок и ссылок */
+.pagination button:hover:not([disabled]),
+.pagination a:hover {
+  background-color: #e0dbd3;
+  border-color: #0000ee;
+  color: #551a8b;
+}
+
+/* Текст страницы посередине */
+.pagination > div {
+  min-width: 130px;
+  text-align: center;
+  user-select: none;
+}

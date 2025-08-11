@@ -1,0 +1,83 @@
+/* Сбросы */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+body {
+  background-color: #fdf6e3; /* светлый бежевый фон страницы */
+  color: #333333;
+  font-size: 16px;
+  line-height: 1.4;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.search-bar {
+  margin: 20px auto 0 auto;
+  padding: 8px 12px;
+  width: fit-content;
+  min-width: 250px;
+  border: 2px solid #666666;
+  background-color: #f5f1e9;
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    2px 2px 5px rgba(102, 102, 102, 0.3);
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  border-radius: 4px;
+}
+
+.search-bar input[type="text"] {
+  background-color: #faf7f1;
+  border: 2px solid #666666;
+  padding: 6px 14px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+  color: #000000;
+  border-radius: 3px;
+  min-width: 150px;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+  outline: none;
+}
+
+.search-bar input[type="text"]:focus {
+  background-color: #e0dbd3;
+  border-color: #0000ee;
+  color: #551a8b;
+}
+
+.search-bar button {
+  background-color: #faf7f1;
+  border: 2px solid #666666;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  color: #0000ee;
+  font-weight: normal;
+  font-family: 'Times New Roman', Times, serif;
+  border-radius: 3px;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+  display: inline-block;
+  min-width: 70px;
+  text-align: center;
+  user-select: none;
+}
+
+.search-bar button:hover {
+  background-color: #e0dbd3;
+  border-color: #0000ee;
+  color: #551a8b;
+}
+
+

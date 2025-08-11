@@ -1,0 +1,26 @@
+.notes-list {
+  margin-bottom: 20px;
+  font-size: 18px;
+  line-height: 1.6;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.notes-list ol {
+  padding-left: 20px;
+}
+
+.notes-list ol li {
+  margin-bottom: 12px;
+}
+
+.notes-list ol li a {
+  color: #0000ee;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.notes-list ol li a:hover {
+  color: #551a8b;
+}
