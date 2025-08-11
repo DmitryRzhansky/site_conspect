@@ -4,6 +4,9 @@
   line-height: 1.6;
   flex-grow: 1;
   overflow-y: auto;
+  display: flex;
+  justify-content: center; /* центр по горизонтали */
+  align-items: center;     /* центр по вертикали (если нужно) */
 }
 
 .notes-list ol {
@@ -23,4 +26,12 @@
 
 .notes-list ol li a:hover {
   color: #551a8b;
+}
+
+.welcome-img {
+  max-width: 400px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
 }
