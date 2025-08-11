@@ -1,6 +1,10 @@
 {% extends "main/base.html" %}
 {% load static %}
 {% load markdown_extras %}
+{% load slugify_extras %}
+
+
+{% block title %}{{ book.title }} — Глава {{ chapter.number }}: {{ chapter.title }}{% endblock %}
 
 {% block content %}
 <h2>{{ book.title }} — Глава {{ chapter.number }}: {{ chapter.title }}</h2>
@@ -35,29 +39,43 @@
 </div>
 {% endif %}
 
-<nav class="chapter-pagination">
+<center><nav class="chapter-pagination">
   {% if page_obj.has_previous %}
   <a href="{% url 'chapter_detail_page' book.id chapter.number page_obj.previous_page_number %}" class="pagination-button">← Предыдущая страница</a>
   {% else %}
-  <button disabled class="pagination-button">← Предыдущая страница</button>
+  <span class="pagination-button disabled">← Предыдущая страница</span>
   {% endif %}
-
-  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
 
   {% if page_obj.has_next %}
   <a href="{% url 'chapter_detail_page' book.id chapter.number page_obj.next_page_number %}" class="pagination-button">Следующая страница →</a>
   {% else %}
-  <button disabled class="pagination-button">Следующая страница →</button>
+  <span class="pagination-button disabled">Следующая страница →</span>
   {% endif %}
-</nav>
+</nav></center>
 
-<nav class="chapter-nav">
-  {% if chapter.number > 1 %}
-  <a href="{% url 'chapter_detail' book.id chapter.number|add:'-1' %}" class="chapter-nav-link">← Предыдущая глава</a>
-  {% endif %}
-  <a href="{% url 'books_list' %}" class="chapter-nav-link">К списку книг</a>
-  {% if book.chapters.count > chapter.number %}
-  <a href="{% url 'chapter_detail' book.id chapter.number|add:'1' %}" class="chapter-nav-link">Следующая глава →</a>
-  {% endif %}
-</nav>
+<script>
+function searchInPage() {
+  const input = document.getElementById('search-input').value.toLowerCase();
+  const contentDiv = document.getElementById('chapter-content');
+  const text = contentDiv.textContent.toLowerCase();
+
+  if (!input) {
+    alert('Введите текст для поиска');
+    return;
+  }
+
+  // Убираем предыдущие подсветки
+  const originalHTML = contentDiv.innerHTML;
+  contentDiv.innerHTML = originalHTML.replace(/<mark class="search-highlight">([^<]+)<\/mark>/gi, '$1');
+
+  if (!text.includes(input)) {
+    alert('Текст не найден');
+    return;
+  }
+
+  // Подсвечиваем все вхождения
+  const regex = new RegExp(input, 'gi');
+  contentDiv.innerHTML = contentDiv.innerHTML.replace(regex, (match) => `<mark class="search-highlight">${match}</mark>`);
+}
+</script>
 {% endblock %}

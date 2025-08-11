@@ -1,6 +1,30 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Book, Chapter
+from .models import Book, Chapter, Term
 from django.core.paginator import Paginator
+from django.urls import reverse
+import re
+
+def linkify_terms(text, terms):
+    if not terms:
+        return text
+
+    sorted_terms = sorted(terms, key=lambda t: len(t.name), reverse=True)
+
+    pattern = re.compile(
+        '|'.join(re.escape(term.name) for term in sorted_terms),
+        re.IGNORECASE
+    )
+
+    def replacer(match):
+        matched_text = match.group(0)
+        term_obj = next((t for t in sorted_terms if t.name.lower() == matched_text.lower()), None)
+        if term_obj:
+            slug = slugify_term(term_obj.name)
+            url = reverse('term_detail', args=[term_obj.slug])
+            return f'<a href="{url}" class="term-link" title="Посмотреть определение">{matched_text}</a>'
+        return matched_text
+
+    return pattern.sub(replacer, text)
 
 
 def chapter_detail(request, book_id, chapter_number, page_number=1):
@@ -8,10 +32,10 @@ def chapter_detail(request, book_id, chapter_number, page_number=1):
     chapter = get_object_or_404(Chapter, book=book, number=chapter_number)
     content = chapter.content or ''
 
-    max_chars = 4000
+    max_chars = 4000  # Максимум символов на страницу (можно настраивать)
 
+    # Разбиваем markdown на блоки с учётом кода, чтобы не резать внутри кода
     def split_markdown_blocks(text, max_block_lines=20):
-        import re
         blocks = []
         code_pattern = re.compile(r'(```[\s\S]+?```)', re.MULTILINE)
         last_pos = 0
@@ -52,7 +76,7 @@ def chapter_detail(request, book_id, chapter_number, page_number=1):
     current_len = 0
 
     for block in blocks:
-        block_len = len(block) + 2
+        block_len = len(block) + 2  # +2 для переносов строк
         if current_len + block_len <= max_chars:
             current_text += block + '\n\n'
             current_len += block_len
@@ -72,13 +96,17 @@ def chapter_detail(request, book_id, chapter_number, page_number=1):
 
     page_text = pages[page_number - 1]
 
+    terms = list(Term.objects.all())
+
+    linked_text = linkify_terms(page_text, terms)
+
     images_on_page = chapter.images.filter(page=page_number).order_by('id')
 
     class PageObj:
         def __init__(self, number, num_pages):
             self.number = number
             self.paginator = type('Paginator', (), {'num_pages': num_pages})()
-            self.object_list = [page_text]
+            self.object_list = [linked_text]
             self.has_previous = number > 1
             self.has_next = number < num_pages
             self.previous_page_number = number - 1
@@ -92,6 +120,17 @@ def chapter_detail(request, book_id, chapter_number, page_number=1):
         'page_obj': page_obj,
         'images_on_page': images_on_page,
     })
+
+
+def terms_list(request):
+    terms = Term.objects.all().order_by('name')
+    paginator = Paginator(terms, 20)  # 20 терминов на страницу
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'books/terms_list.html', {
+        'page_obj': page_obj,
+    })
+
 
 def books_list(request):
     books = Book.objects.all()
@@ -125,3 +164,14 @@ def books_list(request):
         'publisher_filter': publisher_filter,
     }
     return render(request, 'books/books_list.html', context)
+
+
+def slugify_term(name):
+    slug = name.lower()
+    slug = re.sub(r'[^\w]+', '-', slug)
+    slug = slug.strip('-')
+    return slug
+
+def term_detail(request, slug):
+    term = get_object_or_404(Term, slug=slug)
+    return render(request, 'books/term_detail.html', {'term': term})

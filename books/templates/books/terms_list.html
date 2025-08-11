@@ -1,0 +1,49 @@
+{% extends "main/base.html" %}
+{% load slugify_extras %}
+
+{% block title %}Словарь терминов{% endblock %}
+
+{% block content %}
+<h2>Словарь терминов</h2>
+
+<input type="text" id="term-search" placeholder="Поиск по словарю..." onkeyup="filterTerms()" style="padding:8px; width:100%; max-width:400px; margin-bottom:1em;">
+
+<ul id="terms-list" style="list-style:none; padding:0;">
+  {% for term in page_obj %}
+  <li id="term-{{ term.slug }}" style="margin-bottom:1.2em;">
+    <strong><a href="{% url 'term_detail' term.slug %}">{{ term.name }}</a></strong><br>
+  </li>
+  {% empty %}
+  <li>Термины отсутствуют.</li>
+  {% endfor %}
+</ul>
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+  {% else %}
+    <span>« Назад</span>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+  {% else %}
+    <span>Вперед »</span>
+  {% endif %}
+</div>
+
+<script>
+function filterTerms() {
+  const input = document.getElementById('term-search').value.toLowerCase();
+  const list = document.getElementById('terms-list');
+  const items = list.getElementsByTagName('li');
+
+  for (let i = 0; i < items.length; i++) {
+    const text = items[i].textContent.toLowerCase();
+    items[i].style.display = text.includes(input) ? '' : 'none';
+  }
+}
+</script>
+{% endblock %}

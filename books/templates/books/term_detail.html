@@ -1,0 +1,9 @@
+{% extends "main/base.html" %}
+
+{% block title %}{{ term.name }} — Определение{% endblock %}
+
+{% block content %}
+<h2>{{ term.name }}</h2>
+<p>{{ term.definition|linebreaks }}</p>
+<a href="{% url 'terms_list' %}">← Вернуться к словарю терминов</a>
+{% endblock %}
