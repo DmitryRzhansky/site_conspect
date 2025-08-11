@@ -1,18 +1,19 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-from .models import Video
+from .models import Video, Playlist
 
 def videos_list(request):
     videos = Video.objects.all()
-
     search_query = request.GET.get('search', '').strip()
     author_filter = request.GET.get('author', '').strip()
+    playlist_filter = request.GET.get('playlist', '').strip()
 
     if search_query:
         videos = videos.filter(title__icontains=search_query)
-
     if author_filter:
         videos = videos.filter(author__icontains=author_filter)
+    if playlist_filter:
+        videos = videos.filter(playlist__title__icontains=playlist_filter)
 
     paginator = Paginator(videos, 5)
     page_number = request.GET.get('page')
@@ -22,14 +23,14 @@ def videos_list(request):
         'page_obj': page_obj,
         'search_query': search_query,
         'author_filter': author_filter,
+        'playlist_filter': playlist_filter,
     })
 
 def video_detail(request, video_id, page_number=1):
     video = get_object_or_404(Video, pk=video_id)
     content = video.transcript or ''
 
-    max_chars = 4000  # макс символов на страницу
-
+    max_chars = 4000
     blocks = split_markdown_blocks(content)
 
     pages = []
@@ -48,7 +49,6 @@ def video_detail(request, video_id, page_number=1):
 
     if current_text:
         pages.append(current_text.strip())
-
     if not pages:
         pages = ['']
 
@@ -73,6 +73,7 @@ def video_detail(request, video_id, page_number=1):
         'video': video,
         'page_obj': page_obj,
     })
+
 def split_markdown_blocks(text, max_block_lines=20):
     import re
     blocks = []
@@ -80,13 +81,11 @@ def split_markdown_blocks(text, max_block_lines=20):
     last_pos = 0
 
     for match in code_pattern.finditer(text):
-        # Добавляем текст до код-блока
         if match.start() > last_pos:
             pre_text = text[last_pos:match.start()]
             para_blocks = [b.strip() for b in pre_text.split('\n\n') if b.strip()]
             blocks.extend(para_blocks)
 
-        # Добавляем код-блок, разбивая его, если длинный
         code_block = match.group()
         code_lines = code_block.split('\n')
         if len(code_lines) > max_block_lines + 2:
@@ -95,7 +94,7 @@ def split_markdown_blocks(text, max_block_lines=20):
             code_body = code_lines[1:-1]
 
             for i in range(0, len(code_body), max_block_lines):
-                part = code_body[i:i+max_block_lines]
+                part = code_body[i:i + max_block_lines]
                 part_block = '\n'.join([start_marker] + part + [end_marker])
                 blocks.append(part_block)
         else:
@@ -103,7 +102,6 @@ def split_markdown_blocks(text, max_block_lines=20):
 
         last_pos = match.end()
 
-    # Остаток текста после последнего код-блока
     if last_pos < len(text):
         rest_text = text[last_pos:]
         para_blocks = [b.strip() for b in rest_text.split('\n\n') if b.strip()]
@@ -111,3 +109,26 @@ def split_markdown_blocks(text, max_block_lines=20):
 
     return blocks
 
+def playlist_detail(request, playlist_id):
+    playlist = get_object_or_404(Playlist, pk=playlist_id)
+    videos = playlist.videos.all()
+
+    paginator = Paginator(videos, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'videos/playlist_detail.html', {
+        'playlist': playlist,
+        'page_obj': page_obj,
+    })
+
+def playlists_list(request):
+    playlists = Playlist.objects.all()
+
+    paginator = Paginator(playlists, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'videos/videos_list.html', {
+        'page_obj': page_obj,
+    })

@@ -2,16 +2,28 @@
 {% block content %}
 <h2>{{ video.title }}</h2>
 
-{% if video.youtube_id %}
-  <iframe width="600" height="338" 
-          src="https://www.youtube.com/embed/{{ video.youtube_id }}" 
-          frameborder="0" allowfullscreen></iframe>
-{% elif video.video_file %}
-  <video controls width="600">
-    <source src="{{ video.video_file.url }}" type="video/mp4">
-    Ваш браузер не поддерживает видео тег.
-  </video>
-{% endif %}
+<div class="video-item">
+  {% if video.video_file %}
+    <video width="560" height="315" controls>
+      <source src="{{ video.video_file.url }}" type="video/mp4">
+      Ваш браузер не поддерживает воспроизведение видео.
+    </video>
+  {% elif video.youtube_id %}
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video.youtube_id }}" 
+            title="{{ video.title }}" frameborder="0" allowfullscreen></iframe>
+  {% endif %}
+  
+  {% if video.thumbnail and not video.video_file and not video.youtube_id %}
+    <img src="{{ video.thumbnail.url }}" alt="Превью {{ video.title }}" style="max-width: 150px;">
+  {% endif %}
+  
+  {% if video.description %}
+    <p>{{ video.description }}</p>
+  {% endif %}
+  {% if video.author %}
+    <p><strong>Автор:</strong> {{ video.author }}</p>
+  {% endif %}
+</div>
 
 <div class="page-info">
   Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
@@ -37,6 +49,6 @@
   {% endif %}
 </nav>
 
+<a href="{% url 'playlist_detail' video.playlist.id %}">← К плейлисту</a>
 <a href="{% url 'videos_list' %}">← К списку видео</a>
-
 {% endblock %}

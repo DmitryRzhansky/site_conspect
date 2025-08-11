@@ -1,13 +1,7 @@
 {% extends "main/base.html" %}
 {% block content %}
-<h2>Список видео</h2>
-
-<form method="get" action="{% url 'videos_list' %}">
-  <input type="text" name="search" placeholder="Поиск по названию" value="{{ search_query }}">
-  <input type="text" name="author" placeholder="Автор" value="{{ author_filter }}">
-  <input type="text" name="playlist" placeholder="Плейлист" value="{{ playlist_filter }}">
-  <button type="submit">Фильтровать</button>
-</form>
+<h2>Плейлист: {{ playlist.title }}</h2>
+<p>{{ playlist.description }}</p>
 
 <div class="videos-container">
   {% for video in page_obj.object_list %}
@@ -21,18 +15,18 @@
                   title="{{ video.title }}" frameborder="0" allowfullscreen></iframe>
         {% endif %}
       </a>
-      {% if video.author %}
-        <p><strong>Автор:</strong> {{ video.author }}</p>
+      {% if video.description %}
+        <p>{{ video.description }}</p>
       {% endif %}
     </div>
   {% empty %}
-    <p>Видео не найдены.</p>
+    <p>Видео в этом плейлисте пока нет.</p>
   {% endfor %}
 </div>
 
 <div class="pagination">
   {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&author={{ author_filter }}&playlist={{ playlist_filter }}">« Назад</a>
+    <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
   {% else %}
     <span>« Назад</span>
   {% endif %}
@@ -40,9 +34,11 @@
   <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
 
   {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&author={{ author_filter }}&playlist={{ playlist_filter }}">Вперед »</a>
+    <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
   {% else %}
     <span>Вперед »</span>
   {% endif %}
 </div>
+
+<a href="{% url 'videos_list' %}">← К списку видео</a>
 {% endblock %}
