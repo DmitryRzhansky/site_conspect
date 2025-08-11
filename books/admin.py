@@ -7,7 +7,6 @@ class ChapterImageInline(admin.TabularInline):
     model = ChapterImage
     extra = 1
     fields = ('image', 'description', 'page')
-    # Чтобы удобно назначать номер страницы прямо в админке
 
 class ChapterInline(admin.TabularInline):
     model = Chapter
@@ -16,6 +15,7 @@ class ChapterInline(admin.TabularInline):
 class BookAdmin(admin.ModelAdmin):
     list_display = ('title',)
     inlines = [ChapterInline]
+    fields = ('title', 'cover', 'description', 'file')  # Добавляем новые поля
 
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):

@@ -8,7 +8,13 @@
   <li>
     <a href="{% url 'chapter_detail' book.id 1 %}">{{ book.title }}</a>
     {% if book.cover %}
-    <br><img src="{{ book.cover.url }}" alt="Обложка {{ book.title }}" style="max-width: 150px;" />
+      <br><img src="{{ book.cover.url }}" alt="Обложка {{ book.title }}" style="max-width: 150px;" />
+    {% endif %}
+    {% if book.description %}
+      <p>{{ book.description }}</p>
+    {% endif %}
+    {% if book.file %}
+      <p><a href="{{ book.file.url }}" download>Скачать книгу</a></p>
     {% endif %}
   </li>
   {% empty %}

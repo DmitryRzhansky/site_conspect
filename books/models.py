@@ -3,10 +3,11 @@ from django.db import models
 class Book(models.Model):
     title = models.CharField(max_length=200)
     cover = models.ImageField(upload_to='book_covers/', blank=True, null=True)
+    description = models.TextField(blank=True)               # Описание книги
+    file = models.FileField(upload_to='book_files/', blank=True, null=True)  # Файл книги для скачивания
 
     def __str__(self):
         return self.title
-
 class Chapter(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='chapters')
     number = models.PositiveIntegerField()
