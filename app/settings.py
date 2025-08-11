@@ -43,9 +43,6 @@ INSTALLED_APPS = [
 
     'main',
     'books',
-    
-    # 'markdownx',
-    'markdownify'
 ]
 
 MIDDLEWARE = [

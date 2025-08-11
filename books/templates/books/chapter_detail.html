@@ -1,11 +1,11 @@
 {% extends "main/base.html" %}
 {% load static %}
-{% load markdownify %}
+{% load markdown_extras %}
 
 {% block content %}
 <h2>{{ book.title }} — Глава {{ chapter.number }}: {{ chapter.title }}</h2>
 <div class="chapter-content">
-  {{ chapter.content|markdownify }}
+  {{ chapter.content|markdown_highlight }}
 </div>
 
 <nav>
