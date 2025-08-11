@@ -24,6 +24,7 @@ class ChapterImage(models.Model):
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='chapter_images/')
     description = models.CharField(max_length=255, blank=True)
+    page = models.PositiveIntegerField(default=1)  # теперь просто номер страницы для удобства
 
     def __str__(self):
         return f"Изображение для {self.chapter} - {self.description or 'без описания'}"

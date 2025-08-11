@@ -5,38 +5,36 @@
 {% block content %}
 <h2>{{ book.title }} — Глава {{ chapter.number }}: {{ chapter.title }}</h2>
 
-<!-- Прогресс -->
 <div style="margin: 10px 0; font-size: 14px; color: #666;">
   Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
   <progress value="{{ page_obj.number }}" max="{{ page_obj.paginator.num_pages }}" style="width: 100%; height: 10px; margin-top: 5px;"></progress>
 </div>
 
-<!-- Поисковая панель -->
-<div class="search-bar">
+<div class="search-bar" style="margin-bottom: 15px;">
   <input type="text" id="search-input" placeholder="Поиск по странице..." />
   <button onclick="searchInPage()">Найти</button>
 </div>
 
-<!-- Содержимое текущей страницы -->
-<div class="chapter-content" id="chapter-content" style="white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;">
-  {{ page_obj.object_list.0|markdown_highlight }}
+<div class="chapter-content" id="chapter-content" style="white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; font-family: monospace; font-size: 16px;">
+  {{ page_obj.object_list.0|markdown_highlight|safe }}
 </div>
 
-<!-- Вывод картинок главы -->
-{% if chapter.images.all %}
-  <div class="chapter-images" style="margin-top: 20px;">
-    {% for image in chapter.images.all %}
-      <figure style="max-width: 400px; margin-bottom: 15px;">
-        <img src="{{ image.image.url }}" alt="{{ image.caption }}" style="max-width: 100%; height: auto;" />
-        {% if image.caption %}
-          <figcaption style="font-size: 14px; color: #666;">{{ image.caption }}</figcaption>
-        {% endif %}
-      </figure>
-    {% endfor %}
+{% if images_on_page %}
+  <div class="chapter-images-wrapper" style="margin-top: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background: #fafafa;">
+    <h3 style="margin-top: 0;">Изображения на этой странице:</h3>
+    <div class="chapter-images" style="display: flex; flex-wrap: nowrap; gap: 15px;">
+      {% for image in images_on_page %}
+        <figure style="flex: 0 0 auto; max-width: 200px; margin: 0;">
+          <img src="{{ image.image.url }}" alt="{{ image.description }}" style="max-width: 100%; height: auto; display: block;" />
+          {% if image.description %}
+            <figcaption style="font-size: 13px; color: #666; text-align: center;">{{ image.description }}</figcaption>
+          {% endif %}
+        </figure>
+      {% endfor %}
+    </div>
   </div>
 {% endif %}
 
-<!-- Навигация по странице -->
 <nav class="chapter-pagination" style="margin-top: 20px; display: flex; justify-content: space-between;">
   {% if page_obj.has_previous %}
     <a href="{% url 'chapter_detail_page' book.id chapter.number page_obj.previous_page_number %}" class="pagination-button">← Предыдущая страница</a>
@@ -53,14 +51,13 @@
   {% endif %}
 </nav>
 
-<!-- Навигация по главам -->
 <nav class="chapter-nav" style="margin-top: 30px; display: flex; justify-content: center; gap: 30px; font-weight: bold;">
   {% if chapter.number > 1 %}
-    <a href="{% url 'chapter_detail' book.id chapter.number|add:"-1" %}" class="chapter-nav-link">← Предыдущая глава</a>
+    <a href="{% url 'chapter_detail' book.id chapter.number|add:'-1' %}" class="chapter-nav-link">← Предыдущая глава</a>
   {% endif %}
   <a href="{% url 'books_list' %}" class="chapter-nav-link">К списку книг</a>
   {% if book.chapters.count > chapter.number %}
-    <a href="{% url 'chapter_detail' book.id chapter.number|add:"1" %}" class="chapter-nav-link">Следующая глава →</a>
+    <a href="{% url 'chapter_detail' book.id chapter.number|add:'1' %}" class="chapter-nav-link">Следующая глава →</a>
   {% endif %}
 </nav>
 
@@ -72,6 +69,9 @@
       alert('Введите текст для поиска');
       return;
     }
+    // Убираем все предыдущие подсветки
+    content.innerHTML = content.innerHTML.replace(/<mark>(.*?)<\/mark>/gi, '$1');
+
     const text = content.innerText.toLowerCase();
     if (!text.includes(query)) {
       alert('Ничего не найдено на этой странице.');

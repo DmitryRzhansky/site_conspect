@@ -1,11 +1,13 @@
 from django.contrib import admin
 from django.forms import Textarea
-from django.db import models  # ОБЯЗАТЕЛЬНО!
+from django.db import models
 from .models import Book, Chapter, ChapterImage
 
 class ChapterImageInline(admin.TabularInline):
     model = ChapterImage
     extra = 1
+    fields = ('image', 'description', 'page')
+    # Чтобы удобно назначать номер страницы прямо в админке
 
 class ChapterInline(admin.TabularInline):
     model = Chapter
