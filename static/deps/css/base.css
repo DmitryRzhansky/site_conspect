@@ -80,4 +80,36 @@ body {
   color: #551a8b;
 }
 
+.books-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.book-item {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.book-main {
+  max-width: 60%;
+}
+
+.book-info {
+  max-width: 35%;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+.book-info h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
 

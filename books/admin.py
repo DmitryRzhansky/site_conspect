@@ -12,10 +12,17 @@ class ChapterInline(admin.TabularInline):
     model = Chapter
     extra = 1
 
+@admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title',)
+    list_display = ('title', 'author', 'publisher', 'publication_date')
+    search_fields = ('title', 'author', 'publisher', 'isbn')
+    list_filter = ('language', 'publisher', 'publication_date')
     inlines = [ChapterInline]
-    fields = ('title', 'cover', 'description', 'file')  # Добавляем новые поля
+    fields = (
+        'title', 'author', 'publisher', 'publication_date',
+        'isbn', 'pages_count', 'format', 'language',
+        'cover', 'description', 'file'
+    )
 
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
@@ -26,5 +33,3 @@ class ChapterAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': Textarea(attrs={'rows': 15, 'cols': 100})},
     }
-
-admin.site.register(Book, BookAdmin)

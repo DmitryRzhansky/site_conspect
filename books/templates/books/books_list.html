@@ -3,24 +3,45 @@
 
 {% block content %}
 <h2>Книги</h2>
-<ul>
+
+<form method="get" action="{% url 'books_list' %}">
+  <input type="text" name="search" placeholder="Поиск по названию" value="{{ search_query }}">
+  <input type="text" name="author" placeholder="Автор" value="{{ author_filter }}">
+  <input type="text" name="language" placeholder="Язык" value="{{ language_filter }}">
+  <input type="text" name="publisher" placeholder="Издатель" value="{{ publisher_filter }}">
+  <button type="submit">Фильтровать</button>
+</form>
+
+<div class="books-container">
   {% for book in page_obj %}
-  <li>
-    <a href="{% url 'chapter_detail' book.id 1 %}">{{ book.title }}</a>
-    {% if book.cover %}
-      <br><img src="{{ book.cover.url }}" alt="Обложка {{ book.title }}" style="max-width: 150px;" />
-    {% endif %}
-    {% if book.description %}
-      <p>{{ book.description }}</p>
-    {% endif %}
-    {% if book.file %}
-      <p><a href="{{ book.file.url }}" download>Скачать книгу</a></p>
-    {% endif %}
-  </li>
+  <div class="book-item">
+    <div class="book-main">
+      <a href="{% url 'chapter_detail' book.id 1 %}"><h3>{{ book.title }}</h3></a>
+      {% if book.cover %}
+        <img src="{{ book.cover.url }}" alt="Обложка {{ book.title }}" style="max-width: 150px;" />
+      {% endif %}
+      {% if book.description %}
+        <p>{{ book.description }}</p>
+      {% endif %}
+      {% if book.file %}
+        <p><a href="{{ book.file.url }}" download>Скачать книгу</a></p>
+      {% endif %}
+    </div>
+    <div class="book-info">
+      <h4>Об издании</h4>
+      {% if book.isbn %}<p><strong>ISBN:</strong> {{ book.isbn }}</p>{% endif %}
+      {% if book.pages_count %}<p><strong>Количество страниц:</strong> {{ book.pages_count }}</p>{% endif %}
+      {% if book.publication_date %}<p><strong>Дата публикации:</strong> {{ book.publication_date|date:"j F Y" }}</p>{% endif %}
+      {% if book.format %}<p><strong>Формат:</strong> {{ book.format }}</p>{% endif %}
+      {% if book.publisher %}<p><strong>Издатель:</strong> {{ book.publisher }}</p>{% endif %}
+      {% if book.language %}<p><strong>Язык:</strong> {{ book.language }}</p>{% endif %}
+      {% if book.author %}<p><strong>Автор:</strong> {{ book.author }}</p>{% endif %}
+    </div>
+  </div>
   {% empty %}
-  <li>Книг пока нет</li>
+  <p>Книг пока нет</p>
   {% endfor %}
-</ul>
+</div>
 
 <div class="pagination">
   {% if page_obj.has_previous %}
@@ -37,4 +58,5 @@
   <span>Вперед »</span>
   {% endif %}
 </div>
+
 {% endblock %}
