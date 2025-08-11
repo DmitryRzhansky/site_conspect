@@ -4,17 +4,82 @@
 
 {% block content %}
 <h2>{{ book.title }} — Глава {{ chapter.number }}: {{ chapter.title }}</h2>
-<div class="chapter-content">
-  {{ chapter.content|markdown_highlight }}
+
+<!-- Прогресс -->
+<div style="margin: 10px 0; font-size: 14px; color: #666;">
+  Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+  <progress value="{{ page_obj.number }}" max="{{ page_obj.paginator.num_pages }}" style="width: 100%; height: 10px; margin-top: 5px;"></progress>
 </div>
 
-<nav>
-  {% if chapter.number > 1 %}
-    <a href="{% url 'chapter_detail' book.id chapter.number|add:"-1" %}">Предыдущая глава</a>
+<!-- Поисковая панель -->
+<div class="search-bar">
+  <input type="text" id="search-input" placeholder="Поиск по странице..." />
+  <button onclick="searchInPage()">Найти</button>
+</div>
+
+<!-- Содержимое текущей страницы -->
+<div class="chapter-content" id="chapter-content" style="white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;">
+  {{ page_obj.object_list.0|markdown_highlight }}
+</div>
+
+<!-- Вывод картинок главы -->
+{% if chapter.images.all %}
+  <div class="chapter-images" style="margin-top: 20px;">
+    {% for image in chapter.images.all %}
+      <figure style="max-width: 400px; margin-bottom: 15px;">
+        <img src="{{ image.image.url }}" alt="{{ image.caption }}" style="max-width: 100%; height: auto;" />
+        {% if image.caption %}
+          <figcaption style="font-size: 14px; color: #666;">{{ image.caption }}</figcaption>
+        {% endif %}
+      </figure>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<!-- Навигация по странице -->
+<nav class="chapter-pagination" style="margin-top: 20px; display: flex; justify-content: space-between;">
+  {% if page_obj.has_previous %}
+    <a href="{% url 'chapter_detail_page' book.id chapter.number page_obj.previous_page_number %}" class="pagination-button">← Предыдущая страница</a>
+  {% else %}
+    <button disabled class="pagination-button">← Предыдущая страница</button>
   {% endif %}
-  <a href="{% url 'books_list' %}">К списку книг</a>
-  {% if book.chapters.count > chapter.number %}
-    <a href="{% url 'chapter_detail' book.id chapter.number|add:"1" %}">Следующая глава</a>
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="{% url 'chapter_detail_page' book.id chapter.number page_obj.next_page_number %}" class="pagination-button">Следующая страница →</a>
+  {% else %}
+    <button disabled class="pagination-button">Следующая страница →</button>
   {% endif %}
 </nav>
+
+<!-- Навигация по главам -->
+<nav class="chapter-nav" style="margin-top: 30px; display: flex; justify-content: center; gap: 30px; font-weight: bold;">
+  {% if chapter.number > 1 %}
+    <a href="{% url 'chapter_detail' book.id chapter.number|add:"-1" %}" class="chapter-nav-link">← Предыдущая глава</a>
+  {% endif %}
+  <a href="{% url 'books_list' %}" class="chapter-nav-link">К списку книг</a>
+  {% if book.chapters.count > chapter.number %}
+    <a href="{% url 'chapter_detail' book.id chapter.number|add:"1" %}" class="chapter-nav-link">Следующая глава →</a>
+  {% endif %}
+</nav>
+
+<script>
+  function searchInPage() {
+    const query = document.getElementById('search-input').value.toLowerCase();
+    const content = document.getElementById('chapter-content');
+    if (!query) {
+      alert('Введите текст для поиска');
+      return;
+    }
+    const text = content.innerText.toLowerCase();
+    if (!text.includes(query)) {
+      alert('Ничего не найдено на этой странице.');
+      return;
+    }
+    const regex = new RegExp('('+query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')+')', 'gi');
+    content.innerHTML = content.innerHTML.replace(regex, '<mark>$1</mark>');
+  }
+</script>
+
 {% endblock %}

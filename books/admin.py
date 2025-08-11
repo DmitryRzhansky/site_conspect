@@ -1,7 +1,11 @@
 from django.contrib import admin
-from django.db import models
-from .models import Book, Chapter
 from django.forms import Textarea
+from django.db import models  # ОБЯЗАТЕЛЬНО!
+from .models import Book, Chapter, ChapterImage
+
+class ChapterImageInline(admin.TabularInline):
+    model = ChapterImage
+    extra = 1
 
 class ChapterInline(admin.TabularInline):
     model = Chapter
@@ -12,13 +16,13 @@ class BookAdmin(admin.ModelAdmin):
     inlines = [ChapterInline]
 
 @admin.register(Chapter)
-class ChapterAdmin(admin.ModelAdmin):  # НЕ MarkdownxModelAdmin
+class ChapterAdmin(admin.ModelAdmin):
     list_display = ('book', 'number', 'title')
     list_filter = ('book',)
     ordering = ('book', 'number')
-
+    inlines = [ChapterImageInline]
     formfield_overrides = {
-        models.TextField: {'widget': Textarea(attrs={'rows':10, 'cols':80})},
+        models.TextField: {'widget': Textarea(attrs={'rows': 15, 'cols': 100})},
     }
 
 admin.site.register(Book, BookAdmin)
