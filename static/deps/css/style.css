@@ -1,0 +1,198 @@
+/* Сбросы */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+body {
+  background-color: #fdf6e3; /* светлый бежевый фон страницы */
+  color: #333333; /* темно-серый текст */
+  font-size: 16px;
+  line-height: 1.4;
+  padding: 20px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 1000px;
+  min-height: 800px;
+  background-color: #f5f1e9; /* чуть тёплый кремовый */
+  border: 2px solid #666666;
+  box-shadow: 0 0 10px rgba(102, 102, 102, 0.3);
+  display: flex;
+  flex-direction: column;
+  padding: 30px 40px;
+  box-sizing: border-box;
+}
+
+/* Хедер */
+header {
+  border-bottom: 1px solid #999999;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+header h1 {
+  font-weight: normal;
+  font-size: 1.8rem;
+  color: #444444;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: table;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+nav ul li {
+  display: table-cell;
+  padding: 0 15px;
+  border-right: 1px solid #999999;
+}
+
+nav ul li:last-child {
+  border-right: none;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333333;
+  font-weight: normal;
+}
+
+nav a:hover {
+  text-decoration: underline;
+  color: #000000;
+}
+
+/* Основной блок */
+main {
+  flex-grow: 1; /* занимает все свободное пространство */
+  margin-top: 30px;
+  margin-bottom: 30px;
+  background-color: #f9f6f1; /* светлый кремовый, не белый */
+  border: 2px solid #666666;
+  padding: 25px 30px;
+  box-sizing: border-box;
+  overflow-y: auto; /* если контента много, будет скролл */
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* Список конспектов */
+.notes-list {
+  margin-bottom: 20px;
+  font-size: 18px;
+  line-height: 1.6;
+  flex-grow: 1; /* чтобы занимать максимум места */
+  overflow-y: auto;
+}
+
+.notes-list ol {
+  padding-left: 20px;
+}
+
+.notes-list ol li {
+  margin-bottom: 12px;
+}
+
+.notes-list ol li a {
+  color: #0000ee; /* дефолтный синий */
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.notes-list ol li a:hover {
+  color: #551a8b; /* дефолтный фокусный цвет */
+}
+
+/* Пагинация */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  color: #333333;
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
+}
+
+/* Кнопки пагинации */
+.pagination button {
+  background: none;
+  border: none;
+  color: #0000ee;
+  cursor: pointer;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.pagination button:disabled {
+  color: #999999;
+  cursor: default;
+  text-decoration: none;
+}
+
+/* Футер */
+footer {
+  border-top: 1px solid #999999;
+  padding-top: 10px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666666;
+  user-select: none;
+}
+
+/* Поисковая панель */
+.search-bar {
+  display: flex;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.search-bar input[type="text"] {
+  flex-grow: 1;
+  padding: 8px 12px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+  border: 2px solid #666666;
+  border-radius: 3px;
+  background-color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.search-bar input[type="text"]:focus {
+  outline: none;
+  border-color: #0000ee;
+}
+
+.search-bar button {
+  padding: 8px 18px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+  border: 2px solid #666666;
+  background-color: #f5f1e9;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.search-bar button:hover {
+  background-color: #e0dbd3;
+  border-color: #0000ee;
+}

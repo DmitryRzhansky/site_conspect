@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Конспекты по программированию{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'deps/css/style.css' %}">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><a href="{% url 'index' %}">Мои Конспекты по Программированию</a></h1>
+      <nav>
+        <ul>
+            <li><a href="{% url 'books_list' %}">Книги</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      {% block content %}
+      <!-- сюда будет вставляться содержимое -->
+      {% endblock %}
+    </main>
+
+    <footer>
+      <small>© 2025 Мои конспекты. Сделано с любовью.</small>
+    </footer>
+  </div>
+
+  <script src="{% static 'deps/js/main.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>

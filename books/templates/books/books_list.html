@@ -1,0 +1,34 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Книги</h2>
+<ul>
+  {% for book in page_obj %}
+    <li>
+      <a href="{% url 'chapter_detail' book.id 1 %}">{{ book.title }}</a>
+      {% if book.cover %}
+        <br><img src="{{ book.cover.url }}" alt="Обложка {{ book.title }}" style="max-width: 150px;">
+      {% endif %}
+    </li>
+  {% empty %}
+    <li>Книг пока нет</li>
+  {% endfor %}
+</ul>
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+  {% else %}
+    <span>« Назад</span>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+  {% else %}
+    <span>Вперед »</span>
+  {% endif %}
+</div>
+{% endblock %}
