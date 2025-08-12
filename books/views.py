@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Book, Chapter, Term
+from .models import Book, Chapter, Term, Category
 from django.core.paginator import Paginator
 from django.urls import reverse
 import re
@@ -157,12 +157,15 @@ def books_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    categories = Category.objects.all()
+
     context = {
         'page_obj': page_obj,
         'search_query': search_query,
         'author_filter': author_filter,
         'language_filter': language_filter,
         'publisher_filter': publisher_filter,
+        'categories': categories,
     }
     return render(request, 'books/books_list.html', context)
 
@@ -176,3 +179,22 @@ def slugify_term(name):
 def term_detail(request, slug):
     term = get_object_or_404(Term, slug=slug)
     return render(request, 'books/term_detail.html', {'term': term})
+
+def categories_list(request):
+    categories = Category.objects.all()
+    return render(request, 'books/categories_list.html', {'categories': categories})
+
+def books_by_category(request, slug):
+    category = get_object_or_404(Category, slug=slug)
+    books = category.books.all()
+
+    # Можно добавить пагинацию и фильтры по названию, автору и т.д., если нужно
+    paginator = Paginator(books, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'category': category,
+        'page_obj': page_obj,
+    }
+    return render(request, 'books/books_by_category.html', context)

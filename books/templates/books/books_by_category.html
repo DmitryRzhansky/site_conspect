@@ -1,25 +1,7 @@
 {% extends "main/base.html" %}
-{% load static %}
 
 {% block content %}
-<h2>Книги</h2>
-
-<h3>Категории</h3>
-<ul>
-  {% for category in categories %}
-    <li><a href="{% url 'books_by_category' category.slug %}">{{ category.name }}</a></li>
-  {% empty %}
-    <li>Категорий пока нет.</li>
-  {% endfor %}
-</ul>
-
-<form method="get" action="{% url 'books_list' %}">
-  <input type="text" name="search" placeholder="Поиск по названию" value="{{ search_query }}">
-  <input type="text" name="author" placeholder="Автор" value="{{ author_filter }}">
-  <input type="text" name="language" placeholder="Язык" value="{{ language_filter }}">
-  <input type="text" name="publisher" placeholder="Издатель" value="{{ publisher_filter }}">
-  <button type="submit">Фильтровать</button>
-</form>
+<h2>Книги в категории "{{ category.name }}"</h2>
 
 <div class="books-container">
   {% for book in page_obj %}
@@ -30,10 +12,7 @@
         <img src="{{ book.cover.url }}" alt="Обложка {{ book.title }}" style="max-width: 150px;" />
       {% endif %}
       {% if book.description %}
-        {{ book.description|safe }}
-      {% endif %}
-      {% if book.file %}
-        <p><a href="{{ book.file.url }}" download>Скачать книгу</a></p>
+        <p>{{ book.description }}</p>
       {% endif %}
     </div>
     <div class="book-info">
@@ -48,7 +27,7 @@
     </div>
   </div>
   {% empty %}
-  <p>Книг пока нет</p>
+  <p>Книг в этой категории пока нет.</p>
   {% endfor %}
 </div>
 

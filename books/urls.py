@@ -7,4 +7,6 @@ urlpatterns = [
     path('<int:book_id>/chapter/<int:chapter_number>/page/<int:page_number>/', views.chapter_detail, name='chapter_detail_page'),
     path('terms/', views.terms_list, name='terms_list'),
     path('term/<slug:slug>/', views.term_detail, name='term_detail'),
+    path('categories/', views.categories_list, name='categories_list'),
+    path('category/<slug:slug>/', views.books_by_category, name='books_by_category'),
 ]

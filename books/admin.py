@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db import models
 from django import forms
 from ckeditor.widgets import CKEditorWidget
-from .models import Book, Chapter, ChapterImage
+from .models import Book, Chapter, ChapterImage, Category
 from .models import Term
 
 
@@ -32,7 +32,7 @@ class BookAdmin(admin.ModelAdmin):
     fields = (
         'title', 'author', 'publisher', 'publication_date',
         'isbn', 'pages_count', 'format', 'language',
-        'cover', 'description', 'file'
+        'cover', 'description', 'file', 'category'
     )
 
 class ChapterAdminForm(forms.ModelForm):
@@ -62,4 +62,9 @@ class TermAdmin(admin.ModelAdmin):
     form = TermAdminForm
     list_display = ('name', 'slug')
     search_fields = ('name', 'definition')
+    prepopulated_fields = {'slug': ('name',)}
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
     prepopulated_fields = {'slug': ('name',)}

@@ -1,12 +1,25 @@
 from django.db import models
 from django.utils.text import slugify
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
     cover = models.ImageField(upload_to='book_covers/', blank=True, null=True)
     description = models.TextField(blank=True)
     file = models.FileField(upload_to='book_files/', blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='books')
 
     # Новые поля
     isbn = models.CharField(max_length=50, blank=True)
@@ -56,3 +69,4 @@ class Term(models.Model):
 
     def __str__(self):
         return self.name
+    
