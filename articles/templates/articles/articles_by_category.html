@@ -1,0 +1,40 @@
+{% extends "main/base.html" %}
+{% block content %}
+<h2>Статьи в категории: {{ category.name }}</h2>
+
+<ul style="list-style: none; padding: 0;">
+  {% for article in page_obj %}
+  <li style="margin-bottom: 1em; padding: 1em; border: 1px solid #eee; border-radius: 5px;">
+    <a href="{{ article.source_url }}" target="_blank" rel="noopener noreferrer" style="font-size: 1.2em; font-weight: bold;">
+      {{ article.title }}
+    </a>
+    {% if article.author %}
+      <p style="margin: 0.3em 0; color: #666;">Автор: {{ article.author }}</p>
+    {% endif %}
+    {% if article.publication_date %}
+      <p style="margin: 0.3em 0; color: #666;">Дата публикации: {{ article.publication_date }}</p>
+    {% endif %}
+  </li>
+  {% empty %}
+  <li>В этой категории пока нет статей.</li>
+  {% endfor %}
+</ul>
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+  {% else %}
+    <span>« Назад</span>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+  {% else %}
+    <span>Вперед »</span>
+  {% endif %}
+</div>
+
+<a href="{% url 'article_list' %}">← К списку всех статей</a>
+{% endblock %}
