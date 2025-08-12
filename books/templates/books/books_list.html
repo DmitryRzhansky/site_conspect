@@ -4,23 +4,29 @@
 {% block content %}
 <h2>Книги</h2>
 
-<form method="get" action="{% url 'books_list' %}">
-  <input type="text" name="search" placeholder="Поиск по названию" value="{{ search_query }}">
-  <input type="text" name="author" placeholder="Автор" value="{{ author_filter }}">
-  <input type="text" name="language" placeholder="Язык" value="{{ language_filter }}">
-  <input type="text" name="publisher" placeholder="Издатель" value="{{ publisher_filter }}">
-  <button type="submit">Фильтровать</button>
+<form method="get" action="{% url 'books_list' %}" class="filter-form">
+  <div class="form-row">
+    <input type="text" name="search" placeholder="Поиск по названию и описанию" value="{{ search_query }}">
+  </div>
+  
+  <div class="form-row">
+    <input type="text" name="author" placeholder="Автор" value="{{ author_filter }}">
+    <input type="text" name="language" placeholder="Язык" value="{{ language_filter }}">
+    <input type="text" name="publisher" placeholder="Издатель" value="{{ publisher_filter }}">
+    <select name="category">
+      <option value="">Все категории</option>
+      {% for category in categories %}
+        <option value="{{ category.name }}" {% if category_filter == category.name %}selected{% endif %}>
+          {{ category.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  
+  <button type="submit" class="filter-button">Применить фильтры</button>
+  <a href="{% url 'books_list' %}" class="clear-filters">Сбросить фильтры</a>
 </form>
 
-<br>
-<h3>Категории</h3>
-<ul>
-  {% for category in categories %}
-    <li><a href="{% url 'books_by_category' category.slug %}">{{ category.name }}</a></li>
-  {% empty %}
-    <li>Категорий пока нет.</li>
-  {% endfor %}
-</ul>
 <br>
 
 <div class="books-container">
@@ -71,3 +77,4 @@
 </div>
 
 {% endblock %}
+

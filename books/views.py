@@ -1,6 +1,8 @@
+
 from django.shortcuts import render, get_object_or_404
 from .models import Book, Chapter, Term, Category
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.urls import reverse
 import re
 
@@ -9,17 +11,12 @@ def linkify_terms(text, terms):
         return text
 
     sorted_terms = sorted(terms, key=lambda t: len(t.name), reverse=True)
-
-    pattern = re.compile(
-        '|'.join(re.escape(term.name) for term in sorted_terms),
-        re.IGNORECASE
-    )
+    pattern = re.compile('|'.join(re.escape(term.name) for term in sorted_terms), re.IGNORECASE)
 
     def replacer(match):
         matched_text = match.group(0)
         term_obj = next((t for t in sorted_terms if t.name.lower() == matched_text.lower()), None)
         if term_obj:
-            slug = slugify_term(term_obj.name)
             url = reverse('term_detail', args=[term_obj.slug])
             return f'<a href="{url}" class="term-link" title="Посмотреть определение">{matched_text}</a>'
         return matched_text
@@ -125,50 +122,72 @@ def chapter_detail(request, book_id, chapter_number, page_number=1):
 
 def terms_list(request):
     terms = Term.objects.all().order_by('name')
-    paginator = Paginator(terms, 20)  # 20 терминов на страницу
+    categories = Category.objects.all()
+    
+    search_query = request.GET.get('search', '').strip()
+    category_filter = request.GET.get('category', '').strip()
+    
+    if search_query:
+        terms = terms.filter(
+            Q(name__icontains=search_query) | 
+            Q(definition__icontains=search_query)
+        )
+    
+    if category_filter:
+        terms = terms.filter(categories__name__icontains=category_filter)
+    
+    paginator = Paginator(terms, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    categories = Category.objects.all()  # Добавим категории
-
-    return render(request, 'books/terms_list.html', {
+    context = {
         'page_obj': page_obj,
-        'categories': categories,  # передаем в шаблон
-    })
+        'categories': categories,
+        'search_query': search_query,
+        'category_filter': category_filter,
+    }
+    return render(request, 'books/terms_list.html', context)
 
 def books_list(request):
-    books = Book.objects.all()
-
+    books = Book.objects.all().order_by('-publication_date')
+    categories = Category.objects.all()
+    
     search_query = request.GET.get('search', '').strip()
     author_filter = request.GET.get('author', '').strip()
     language_filter = request.GET.get('language', '').strip()
     publisher_filter = request.GET.get('publisher', '').strip()
-
+    category_filter = request.GET.get('category', '').strip()
+    
     if search_query:
-        books = books.filter(title__icontains=search_query)
-
+        books = books.filter(
+            Q(title__icontains=search_query) | 
+            Q(description__icontains=search_query)
+        )
+    
     if author_filter:
         books = books.filter(author__icontains=author_filter)
-
+    
     if language_filter:
         books = books.filter(language__icontains=language_filter)
-
+    
     if publisher_filter:
         books = books.filter(publisher__icontains=publisher_filter)
-
-    paginator = Paginator(books, 5)
+    
+    if category_filter:
+        books = books.filter(category__name__icontains=category_filter)
+    
+    paginator = Paginator(books, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
-    categories = Category.objects.all()
-
+    
     context = {
         'page_obj': page_obj,
+        'categories': categories,
         'search_query': search_query,
         'author_filter': author_filter,
         'language_filter': language_filter,
         'publisher_filter': publisher_filter,
-        'categories': categories,
+        'category_filter': category_filter,
     }
     return render(request, 'books/books_list.html', context)
 
@@ -189,34 +208,44 @@ def categories_list(request):
 
 def books_by_category(request, slug):
     category = get_object_or_404(Category, slug=slug)
-    books = category.books.all()
-
-    # Можно добавить пагинацию и фильтры по названию, автору и т.д., если нужно
-    paginator = Paginator(books, 5)
+    books = category.books.all().order_by('-publication_date')
+    
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        books = books.filter(
+            Q(title__icontains=search_query) | 
+            Q(description__icontains=search_query)
+        )
+    
+    paginator = Paginator(books, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
+    
     context = {
         'category': category,
         'page_obj': page_obj,
+        'search_query': search_query,
     }
     return render(request, 'books/books_by_category.html', context)
 
 def terms_by_category(request, slug):
     category = get_object_or_404(Category, slug=slug)
-
-    # Если ManyToMany
     terms = category.terms.all().order_by('name')
-
-    # Если ForeignKey
-    # terms = Term.objects.filter(category=category).order_by('name')
-
+    
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        terms = terms.filter(
+            Q(name__icontains=search_query) | 
+            Q(definition__icontains=search_query)
+        )
+    
     paginator = Paginator(terms, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
+    
     context = {
         'category': category,
         'page_obj': page_obj,
+        'search_query': search_query,
     }
     return render(request, 'books/terms_by_category.html', context)

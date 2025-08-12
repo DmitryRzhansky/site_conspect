@@ -3,30 +3,134 @@
 {% block content %}
 <h2>Термины в категории "{{ category.name }}"</h2>
 
-<ul class="terms-list">
+<form method="get" action="{% url 'terms_by_category' category.slug %}" class="filter-form">
+  <input type="text" name="search" placeholder="Поиск по терминам" value="{{ search_query }}" id="term-search">
+  <button type="submit" class="filter-button">Поиск</button>
+  <a href="{% url 'terms_by_category' category.slug %}" class="clear-filters">Сбросить</a>
+</form>
+
+<ul id="terms-list">
   {% for term in page_obj %}
-    <li>
-      <a href="{% url 'term_detail' term.slug %}">{{ term.name }}</a>
-    </li>
+  <li class="term-item">
+    <a href="{% url 'term_detail' term.slug %}" class="term-link">
+      <strong>{{ term.name }}</strong>
+    </a>
+    {% if term.definition %}
+      <div class="term-preview">{{ term.definition|striptags|truncatewords:20 }}</div>
+    {% endif %}
+  </li>
   {% empty %}
-    <p>Терминов в этой категории пока нет.</p>
+  <li class="no-results">Терминов в этой категории по вашему запросу не найдено.</li>
   {% endfor %}
 </ul>
 
 <div class="pagination">
   {% if page_obj.has_previous %}
-  <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+      « Назад
+    </a>
   {% else %}
-  <span>« Назад</span>
+    <span>« Назад</span>
   {% endif %}
 
   <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
 
   {% if page_obj.has_next %}
-  <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+      Вперед »
+    </a>
   {% else %}
-  <span>Вперед »</span>
+    <span>Вперед »</span>
   {% endif %}
 </div>
 
+<a href="{% url 'terms_list' %}" class="back-link">← Вернуться ко всем терминам</a>
+
+<style>
+.filter-form {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 5px;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.filter-form input {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+.filter-button {
+  background: #4a6ea9;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.clear-filters {
+  color: #666;
+  text-decoration: none;
+}
+
+#terms-list {
+  list-style: none;
+  padding: 0;
+}
+
+.term-item {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.term-link {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.term-preview {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #4a6ea9;
+  text-decoration: none;
+}
+</style>
+
+<script>
+document.getElementById('term-search').addEventListener('input', function() {
+  const searchValue = this.value.toLowerCase();
+  const terms = document.querySelectorAll('.term-item');
+  
+  terms.forEach(term => {
+    const termText = term.textContent.toLowerCase();
+    term.style.display = termText.includes(searchValue) ? '' : 'none';
+  });
+});
+</script>
 {% endblock %}

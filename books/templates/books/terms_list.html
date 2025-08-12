@@ -1,38 +1,57 @@
 {% extends "main/base.html" %}
-{% load slugify_extras %}
 
 {% block title %}Словарь терминов{% endblock %}
 
 {% block content %}
 <h2>Словарь терминов</h2>
 
-<input type="text" id="term-search" placeholder="Поиск по словарю..." onkeyup="filterTerms()" style="padding:8px; width:100%; max-width:400px; margin-bottom:1em;">
-
-<h3>Категории</h3>
-<ul>
-  {% for category in categories %}
-    <!-- Ссылка ведёт на страницу терминов категории -->
-    <li><a href="{% url 'terms_by_category' category.slug %}">{{ category.name }}</a></li>
-  {% empty %}
-    <li>Категорий пока нет.</li>
-  {% endfor %}
-</ul>
+<form method="get" action="{% url 'terms_list' %}" class="filter-form">
+  <div class="form-row">
+    <input type="text" name="search" placeholder="Поиск по терминам и определениям" value="{{ search_query }}" id="term-search">
+    <select name="category">
+      <option value="">Все категории</option>
+      {% for category in categories %}
+        <option value="{{ category.name }}" {% if category_filter == category.name %}selected{% endif %}>
+          {{ category.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="filter-button">Применить фильтры</button>
+  <a href="{% url 'terms_list' %}" class="clear-filters">Сбросить фильтры</a>
+</form>
 
 <br>
 
-<ul id="terms-list" style="list-style:none; padding:0;">
-  {% for term in page_obj %}
-  <li id="term-{{ term.slug }}" style="margin-bottom:1.2em;">
-    <strong><a href="{% url 'term_detail' term.slug %}">{{ term.name }}</a></strong><br>
-  </li>
-  {% empty %}
-  <li>Термины отсутствуют.</li>
-  {% endfor %}
-</ul>
+<div id="terms-container">
+  <ul id="terms-list">
+    {% for term in page_obj %}
+    <li id="term-{{ term.slug }}" class="term-item">
+      <a href="{% url 'term_detail' term.slug %}" class="term-link">
+        <strong>{{ term.name }}</strong>
+      </a>
+      {% if term.categories.exists %}
+        <div class="term-categories">
+          {% for category in term.categories.all %}
+            <a href="{% url 'terms_by_category' category.slug %}" class="category-tag">{{ category.name }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if term.definition %}
+        <div class="term-preview">{{ term.definition|striptags|truncatewords:20 }}</div>
+      {% endif %}
+    </li>
+    {% empty %}
+    <li class="no-results">Терминов по вашему запросу не найдено.</li>
+    {% endfor %}
+  </ul>
+</div>
 
 <div class="pagination">
   {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
+      « Назад
+    </a>
   {% else %}
     <span>« Назад</span>
   {% endif %}
@@ -40,22 +59,26 @@
   <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
 
   {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
+      Вперед »
+    </a>
   {% else %}
     <span>Вперед »</span>
   {% endif %}
 </div>
 
+
 <script>
 function filterTerms() {
   const input = document.getElementById('term-search').value.toLowerCase();
-  const list = document.getElementById('terms-list');
-  const items = list.getElementsByTagName('li');
-
-  for (let i = 0; i < items.length; i++) {
-    const text = items[i].textContent.toLowerCase();
-    items[i].style.display = text.includes(input) ? '' : 'none';
-  }
+  const terms = document.querySelectorAll('.term-item');
+  
+  terms.forEach(term => {
+    const text = term.textContent.toLowerCase();
+    term.style.display = text.includes(input) ? '' : 'none';
+  });
 }
+
+document.getElementById('term-search').addEventListener('input', filterTerms);
 </script>
 {% endblock %}
