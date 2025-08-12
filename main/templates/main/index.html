@@ -4,18 +4,9 @@
 {% block title %}Главная — Конспекты{% endblock %}
 
 {% block content %}
-<section class="search-bar">
-  <input type="text" placeholder="Поиск по конспектам..." aria-label="Поиск по конспектам" />
-  <button type="button">Найти</button>
-</section>
 
 <section class="notes-list">
   <img src="{% static 'deps/img/wallpaper.jpg' %}" alt="Приветствие пользователя" class="welcome-img" />
 </section>
 
-<div class="pagination">
-  <button disabled>назад</button>
-  <div>страница 1 из 1</div>
-  <button disabled>вперед</button>
-</div>
 {% endblock %}
