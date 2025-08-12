@@ -1,22 +1,22 @@
 {% extends "main/base.html" %}
 {% block content %}
 <h2>Плейлист: {{ playlist.title }}</h2>
-<p>{{ playlist.description }}</p>
+{% if playlist.description %}<p>{{ playlist.description }}</p>{% endif %}
+{% if playlist.category %}<p>Категория: {{ playlist.category.name }}</p>{% endif %}
 
-<div class="videos-container">
+<div class="videos-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
   {% for video in page_obj.object_list %}
-    <div class="video-item">
+    <div class="video-item" style="border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
       <a href="{% url 'video_detail' video.id %}">
         <h3>{{ video.title }}</h3>
         {% if video.thumbnail %}
-          <img src="{{ video.thumbnail.url }}" alt="Превью {{ video.title }}" style="max-width: 150px;">
+          <img src="{{ video.thumbnail.url }}" alt="Превью {{ video.title }}" style="width: 100%; height: auto;">
         {% elif video.youtube_id %}
-          <iframe width="320" height="180" src="https://www.youtube.com/embed/{{ video.youtube_id }}" 
-                  title="{{ video.title }}" frameborder="0" allowfullscreen></iframe>
+          <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/mqdefault.jpg" alt="Превью {{ video.title }}" style="width: 100%; height: auto;">
         {% endif %}
       </a>
-      {% if video.description %}
-        <p>{{ video.description }}</p>
+      {% if video.author %}
+        <p><small>Автор: {{ video.author }}</small></p>
       {% endif %}
     </div>
   {% empty %}
@@ -40,5 +40,5 @@
   {% endif %}
 </div>
 
-<a href="{% url 'videos_list' %}">← К списку видео</a>
+<a href="{% url 'playlists_list' %}">← К списку плейлистов</a>
 {% endblock %}

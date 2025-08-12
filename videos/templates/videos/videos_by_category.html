@@ -1,20 +1,6 @@
 {% extends "main/base.html" %}
 {% block content %}
-<h2>Список видео</h2>
-
-<form method="get" action="{% url 'videos_list' %}">
-  <input type="text" name="search" placeholder="Поиск по названию" value="{{ search_query }}">
-  <input type="text" name="author" placeholder="Автор" value="{{ author_filter }}">
-  <select name="category">
-    <option value="">Все категории</option>
-    {% for category in categories %}
-      <option value="{{ category.name }}" {% if category_filter == category.name %}selected{% endif %}>
-        {{ category.name }}
-      </option>
-    {% endfor %}
-  </select>
-  <button type="submit">Фильтровать</button>
-</form>
+<h2>Видео в категории: {{ category.name }}</h2>
 
 <div class="videos-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
   {% for video in page_obj.object_list %}
@@ -30,18 +16,15 @@
       {% if video.author %}
         <p><small>Автор: {{ video.author }}</small></p>
       {% endif %}
-      {% if video.category %}
-        <p><small>Категория: {{ video.category.name }}</small></p>
-      {% endif %}
     </div>
   {% empty %}
-    <p>Видео не найдены.</p>
+    <p>Видео в этой категории пока нет.</p>
   {% endfor %}
 </div>
 
 <div class="pagination">
   {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&author={{ author_filter }}{% if category_filter %}&category={{ category_filter }}{% endif %}">« Назад</a>
+    <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
   {% else %}
     <span>« Назад</span>
   {% endif %}
@@ -49,9 +32,11 @@
   <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
 
   {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&author={{ author_filter }}{% if category_filter %}&category={{ category_filter }}{% endif %}">Вперед »</a>
+    <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
   {% else %}
     <span>Вперед »</span>
   {% endif %}
 </div>
+
+<a href="{% url 'videos_list' %}">← К списку видео</a>
 {% endblock %}

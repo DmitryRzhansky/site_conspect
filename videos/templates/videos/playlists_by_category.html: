@@ -1,0 +1,37 @@
+{% extends "main/base.html" %}
+{% block content %}
+<h2>Плейлисты в категории: {{ category.name }}</h2>
+
+<div class="playlists-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+  {% for playlist in page_obj.object_list %}
+    <div class="playlist-item" style="border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+      <a href="{% url 'playlist_detail' playlist.id %}">
+        {% if playlist.thumbnail %}
+          <img src="{{ playlist.thumbnail.url }}" alt="Превью {{ playlist.title }}" style="width: 100%; height: auto; border-radius: 3px;">
+        {% endif %}
+        <h3 style="margin-top: 10px;">{{ playlist.title }}</h3>
+      </a>
+    </div>
+  {% empty %}
+    <p>Плейлисты в этой категории пока нет.</p>
+  {% endfor %}
+</div>
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+  {% else %}
+    <span>« Назад</span>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+  {% else %}
+    <span>Вперед »</span>
+  {% endif %}
+</div>
+
+<a href="{% url 'playlists_list' %}">← К списку плейлистов</a>
+{% endblock %}

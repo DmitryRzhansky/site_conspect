@@ -1,21 +1,23 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-from .models import Video, Playlist
+from .models import Video, Playlist, Category
 
 def videos_list(request):
-    videos = Video.objects.all()
+    videos = Video.objects.all().order_by('-created_at')
     search_query = request.GET.get('search', '').strip()
     author_filter = request.GET.get('author', '').strip()
-    playlist_filter = request.GET.get('playlist', '').strip()
+    category_filter = request.GET.get('category', '').strip()
 
     if search_query:
         videos = videos.filter(title__icontains=search_query)
     if author_filter:
         videos = videos.filter(author__icontains=author_filter)
-    if playlist_filter:
-        videos = videos.filter(playlist__title__icontains=playlist_filter)
+    if category_filter:
+        videos = videos.filter(category__name__icontains=category_filter)
 
-    paginator = Paginator(videos, 5)
+    categories = Category.objects.all()
+    
+    paginator = Paginator(videos, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -23,7 +25,8 @@ def videos_list(request):
         'page_obj': page_obj,
         'search_query': search_query,
         'author_filter': author_filter,
-        'playlist_filter': playlist_filter,
+        'category_filter': category_filter,
+        'categories': categories,
     })
 
 def video_detail(request, video_id, page_number=1):
@@ -111,9 +114,9 @@ def split_markdown_blocks(text, max_block_lines=20):
 
 def playlist_detail(request, playlist_id):
     playlist = get_object_or_404(Playlist, pk=playlist_id)
-    videos = playlist.videos.all()
+    videos = playlist.videos.all().order_by('-created_at')
 
-    paginator = Paginator(videos, 5)
+    paginator = Paginator(videos, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -123,12 +126,46 @@ def playlist_detail(request, playlist_id):
     })
 
 def playlists_list(request):
-    playlists = Playlist.objects.all()
+    playlists = Playlist.objects.all().order_by('-created_at')
+    category_filter = request.GET.get('category', '').strip()
 
-    paginator = Paginator(playlists, 10)
+    if category_filter:
+        playlists = playlists.filter(category__name__icontains=category_filter)
+
+    categories = Category.objects.all()
+    
+    paginator = Paginator(playlists, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'videos/videos_list.html', {
+    return render(request, 'videos/playlists_list.html', {
+        'page_obj': page_obj,
+        'category_filter': category_filter,
+        'categories': categories,
+    })
+
+def videos_by_category(request, slug):
+    category = get_object_or_404(Category, slug=slug)
+    videos = category.videos.all().order_by('-created_at')
+
+    paginator = Paginator(videos, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'videos/videos_by_category.html', {
+        'category': category,
+        'page_obj': page_obj,
+    })
+
+def playlists_by_category(request, slug):
+    category = get_object_or_404(Category, slug=slug)
+    playlists = category.playlists.all().order_by('-created_at')
+
+    paginator = Paginator(playlists, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'videos/playlists_by_category.html', {
+        'category': category,
         'page_obj': page_obj,
     })
