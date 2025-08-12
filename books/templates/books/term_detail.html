@@ -4,6 +4,6 @@
 
 {% block content %}
 <h2>{{ term.name }}</h2>
-<p>{{ term.definition|linebreaks }}</p>
+<p>{{ term.definition|safe }}}</p>
 <a href="{% url 'terms_list' %}">← Вернуться к словарю терминов</a>
 {% endblock %}

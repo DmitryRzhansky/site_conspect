@@ -50,8 +50,16 @@ class ChapterAdmin(admin.ModelAdmin):
     ordering = ('book', 'number')
     inlines = [ChapterImageInline]
 
+class TermAdminForm(forms.ModelForm):
+    definition = forms.CharField(widget=CKEditorWidget(), required=False)
+
+    class Meta:
+        model = Term
+        fields = '__all__'
+
 @admin.register(Term)
 class TermAdmin(admin.ModelAdmin):
+    form = TermAdminForm
     list_display = ('name', 'slug')
     search_fields = ('name', 'definition')
     prepopulated_fields = {'slug': ('name',)}

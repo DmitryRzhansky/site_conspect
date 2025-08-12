@@ -81,7 +81,8 @@ def chapter_detail(request, book_id, chapter_number, page_number=1):
             current_text += block + '\n\n'
             current_len += block_len
         else:
-            pages.append(current_text.strip())
+            if current_text:
+                pages.append(current_text.strip())
             current_text = block + '\n\n'
             current_len = block_len
 
