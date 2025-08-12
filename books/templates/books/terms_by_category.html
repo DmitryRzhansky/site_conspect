@@ -1,0 +1,32 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<h2>Термины в категории "{{ category.name }}"</h2>
+
+<ul class="terms-list">
+  {% for term in page_obj %}
+    <li>
+      <a href="{% url 'term_detail' term.slug %}">{{ term.name }}</a>
+    </li>
+  {% empty %}
+    <p>Терминов в этой категории пока нет.</p>
+  {% endfor %}
+</ul>
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+  {% else %}
+  <span>« Назад</span>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+  {% else %}
+  <span>Вперед »</span>
+  {% endif %}
+</div>
+
+{% endblock %}

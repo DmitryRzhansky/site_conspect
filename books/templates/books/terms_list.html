@@ -8,6 +8,18 @@
 
 <input type="text" id="term-search" placeholder="Поиск по словарю..." onkeyup="filterTerms()" style="padding:8px; width:100%; max-width:400px; margin-bottom:1em;">
 
+<h3>Категории</h3>
+<ul>
+  {% for category in categories %}
+    <!-- Ссылка ведёт на страницу терминов категории -->
+    <li><a href="{% url 'terms_by_category' category.slug %}">{{ category.name }}</a></li>
+  {% empty %}
+    <li>Категорий пока нет.</li>
+  {% endfor %}
+</ul>
+
+<br>
+
 <ul id="terms-list" style="list-style:none; padding:0;">
   {% for term in page_obj %}
   <li id="term-{{ term.slug }}" style="margin-bottom:1.2em;">

@@ -63,6 +63,7 @@ class TermAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
     search_fields = ('name', 'definition')
     prepopulated_fields = {'slug': ('name',)}
+    filter_horizontal = ('categories',)
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):

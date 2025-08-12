@@ -4,6 +4,14 @@
 {% block content %}
 <h2>Книги</h2>
 
+<form method="get" action="{% url 'books_list' %}">
+  <input type="text" name="search" placeholder="Поиск по названию" value="{{ search_query }}">
+  <input type="text" name="author" placeholder="Автор" value="{{ author_filter }}">
+  <input type="text" name="language" placeholder="Язык" value="{{ language_filter }}">
+  <input type="text" name="publisher" placeholder="Издатель" value="{{ publisher_filter }}">
+  <button type="submit">Фильтровать</button>
+</form>
+
 <h3>Категории</h3>
 <ul>
   {% for category in categories %}
@@ -12,14 +20,6 @@
     <li>Категорий пока нет.</li>
   {% endfor %}
 </ul>
-
-<form method="get" action="{% url 'books_list' %}">
-  <input type="text" name="search" placeholder="Поиск по названию" value="{{ search_query }}">
-  <input type="text" name="author" placeholder="Автор" value="{{ author_filter }}">
-  <input type="text" name="language" placeholder="Язык" value="{{ language_filter }}">
-  <input type="text" name="publisher" placeholder="Издатель" value="{{ publisher_filter }}">
-  <button type="submit">Фильтровать</button>
-</form>
 
 <div class="books-container">
   {% for book in page_obj %}

@@ -128,10 +128,13 @@ def terms_list(request):
     paginator = Paginator(terms, 20)  # 20 терминов на страницу
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    categories = Category.objects.all()  # Добавим категории
+
     return render(request, 'books/terms_list.html', {
         'page_obj': page_obj,
+        'categories': categories,  # передаем в шаблон
     })
-
 
 def books_list(request):
     books = Book.objects.all()
@@ -198,3 +201,22 @@ def books_by_category(request, slug):
         'page_obj': page_obj,
     }
     return render(request, 'books/books_by_category.html', context)
+
+def terms_by_category(request, slug):
+    category = get_object_or_404(Category, slug=slug)
+
+    # Если ManyToMany
+    terms = category.terms.all().order_by('name')
+
+    # Если ForeignKey
+    # terms = Term.objects.filter(category=category).order_by('name')
+
+    paginator = Paginator(terms, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'category': category,
+        'page_obj': page_obj,
+    }
+    return render(request, 'books/terms_by_category.html', context)
