@@ -12,6 +12,7 @@
   <button type="submit">Фильтровать</button>
 </form>
 
+<br>
 <h3>Категории</h3>
 <ul>
   {% for category in categories %}
@@ -20,6 +21,7 @@
     <li>Категорий пока нет.</li>
   {% endfor %}
 </ul>
+<br>
 
 <div class="books-container">
   {% for book in page_obj %}
