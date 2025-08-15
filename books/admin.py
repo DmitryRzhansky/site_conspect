@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db import models
 from django import forms
 from ckeditor.widgets import CKEditorWidget
 from .models import Book, Chapter, ChapterImage, Category

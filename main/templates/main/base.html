@@ -6,13 +6,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Конспекты по программированию{% endblock %}</title>
+
+  <!-- Шрифты -->
   <link href="https://fonts.cdnfonts.com/css/comic-sans-ms" rel="stylesheet">
+
+  <!-- Стили проекта -->
   <link rel="stylesheet" href="{% static 'deps/css/base.css' %}">
   <link rel="stylesheet" href="{% static 'deps/css/layout.css' %}">
   <link rel="stylesheet" href="{% static 'deps/css/typography.css' %}">
   <link rel="stylesheet" href="{% static 'deps/css/components.css' %}">
   <link rel="stylesheet" href="{% static 'deps/css/chapter.css' %}">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'deps/css/code-copy.css' %}">
+
+  <!-- Highlight.js по умолчанию светлая -->
+  <link id="hljs-theme" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
 </head>
 <body>
   <!-- Анимированный фон -->
@@ -21,12 +29,10 @@
   <div class="container">
 
     <header>
-      <!-- аголовок -->
       <h1>
-        <a href="{% url 'index' %}">Мои Конспекты по Программированию</a>
+        <a href="{% url 'index' %}">Головной синтаксис</a>
       </h1>
       
-      <!-- Навигация с анимированными кнопками -->
       <nav>
         <ul>
           <li><a href="{% url 'books_list' %}">Книги</a></li>
@@ -36,27 +42,26 @@
           <li><a href="{% url 'terms_list' %}">Словарь</a></li>
         </ul>
       </nav>
-  
     </header>
 
     <main>
-      {% block content %}
-      <!-- сюда будет вставляться содержимое -->
-      {% endblock %}
+      {% block content %}{% endblock %}
     </main>
 
     <footer>
-
-      
-      <small>© 2025 Мои конспекты. Сделано с любовью.</small>
-      
-        </a>
-      </div>
+      <small>© 2025 Головной синтаксис. Безымянный сегмент души.</small>
     </footer>
   </div>
 
-
+  <!-- JS проекта -->
   <script src="{% static 'deps/js/main.js' %}"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
 
+  <!-- JS копирования кода -->
+  <script src="{% static 'deps/js/code-copy.js' %}"></script>
+
+  <!-- JS переключения темы подсветки -->
+  <script src="{% static 'deps/js/code-theme-toggle.js' %}"></script>
 </body>
 </html>
