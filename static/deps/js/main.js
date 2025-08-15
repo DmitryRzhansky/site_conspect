@@ -21,3 +21,4 @@ function searchInPage() {
 
   content.innerHTML = content.innerHTML.replace(regex, '<mark>$1</mark>');
 }
+
