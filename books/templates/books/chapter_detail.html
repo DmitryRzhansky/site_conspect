@@ -9,35 +9,31 @@
 {% block content %}
 <h2>{{ book.title }} — Глава {{ chapter.number }}: {{ chapter.title }}</h2>
 
-<div class="page-info">
-  Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
-  <progress value="{{ page_obj.number }}" max="{{ page_obj.paginator.num_pages }}"></progress>
+<div class="chapter-navigation">
+  <div class="chapters-list">
+    <h3>Содержание книги:</h3>
+    <ul>
+      {% for ch in book.chapters.all %}
+        <li {% if ch.number == chapter.number %}class="current-chapter"{% endif %}>
+          <a href="{% url 'chapter_detail' book.id ch.number %}">
+            Глава {{ ch.number }}: {{ ch.title }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 </div>
 
-<div class="search-bar">
-  <input type="text" id="search-input" placeholder="Поиск по странице..." />
-  <button onclick="searchInPage()">Найти</button>
-</div>
+
 
 <div class="chapter-content" id="chapter-content">
   {{ page_obj.object_list.0|markdown_highlight|safe }}
 </div>
 
-{% if images_on_page %}
-<div class="chapter-images-wrapper">
-  <h3>Изображения на этой странице:</h3>
-  <div class="chapter-images">
-    {% for image in images_on_page %}
-    <figure>
-      <img src="{{ image.image.url }}" alt="{{ image.description }}" />
-      {% if image.description %}
-      <figcaption>{{ image.description }}</figcaption>
-      {% endif %}
-    </figure>
-    {% endfor %}
-  </div>
+<div class="page-info">
+  Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+  <progress value="{{ page_obj.number }}" max="{{ page_obj.paginator.num_pages }}"></progress>
 </div>
-{% endif %}
 
 <center><nav class="chapter-pagination">
   {% if page_obj.has_previous %}
