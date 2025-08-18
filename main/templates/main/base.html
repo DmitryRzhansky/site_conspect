@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -16,10 +15,10 @@
   <link rel="stylesheet" href="{% static 'deps/css/typography.css' %}">
   <link rel="stylesheet" href="{% static 'deps/css/components.css' %}">
   <link rel="stylesheet" href="{% static 'deps/css/chapter.css' %}">
-  <link rel="stylesheet" href="{% static 'deps/css/code-copy.css' %}">
+  <link rel="stylesheet" href="{% static 'deps/css/code.css' %}">
 
-  <!-- Highlight.js по умолчанию светлая -->
-  <link id="hljs-theme" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<!-- Highlight.js тёмная тема -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 
 </head>
 <body>
@@ -27,12 +26,10 @@
   <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: url('{% static 'deps/img/wallpaper_for_all.jpg' %}') repeat; opacity: 0.1;"></div>
 
   <div class="container">
-
     <header>
       <h1>
         <a href="{% url 'index' %}">Головной синтаксис</a>
       </h1>
-      
       <nav>
         <ul>
           <li><a href="{% url 'books_list' %}">Книги</a></li>
@@ -53,15 +50,10 @@
     </footer>
   </div>
 
-  <!-- JS проекта -->
+  <!-- JS -->
   <script src="{% static 'deps/js/main.js' %}"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
-
-  <!-- JS копирования кода -->
   <script src="{% static 'deps/js/code-copy.js' %}"></script>
-
-  <!-- JS переключения темы подсветки -->
-  <script src="{% static 'deps/js/code-theme-toggle.js' %}"></script>
 </body>
 </html>

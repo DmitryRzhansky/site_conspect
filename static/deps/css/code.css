@@ -2,9 +2,10 @@
   position: relative;
 }
 
-.copy-btn, .theme-btn {
+.copy-btn {
   position: absolute;
   bottom: 8px;
+  right: 8px;
   background: #f0f0f0;
   border: 1px solid #ccc;
   padding: 4px 8px;
@@ -15,14 +16,6 @@
   transition: opacity 0.2s;
 }
 
-.copy-btn {
-  right: 8px;
-}
-
-.theme-btn {
-  right: 100px; /* Позиция слева от кнопки копирования */
-}
-
-.copy-btn:hover, .theme-btn:hover {
+.copy-btn:hover {
   opacity: 1;
 }
